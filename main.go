@@ -15,14 +15,12 @@ import (
 
 var (
 	nodeAddr           string
-	seed               int64
 	rate               int64
 	testClientInstance *rpc.HTTP
 )
 
 func init() {
 	flag.StringVar(&nodeAddr, "addr", "tcp://127.0.0.1:26657", "set addr path")
-	flag.Int64Var(&seed, "seed", 100, "seed")
 	flag.Int64Var(&rate, "rate", 5000, "rate")
 }
 
@@ -34,9 +32,9 @@ func defaultClient() *rpc.HTTP {
 func main() {
 	flag.Parse()
 	c := defaultClient()
-	r := rand.New(rand.NewSource(seed))
+	r := rand.New(rand.NewSource(int64(time.Now().Nanosecond())))
 	bucket := ratelimit.NewBucketWithRate(float64(rate), rate)
-	p := NewPool(300, 10000, 10)
+	p := NewPool(300, 50000, 300)
 	i := 0
 	for {
 		bucket.Wait(1)
